@@ -1,3 +1,5 @@
+using DG.Tweening;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -11,10 +13,11 @@ namespace IdleClicker.GameLogic
 
         [SerializeField] private Button _tapTheScreenBtn;
 
-        private int _maxLevel = 1;
         ///<value>square, level</value>
         private readonly Dictionary<GameSquareElement, int> _spawnedElements = new();
         private int _currentTap = 0;
+        private bool _squareSpawnAllowed = true;
+        private int _mergeCounter = 0;
 
         void Start()
         {
@@ -38,6 +41,8 @@ namespace IdleClicker.GameLogic
 
         private void TapTheScreen()
         {
+            if (!_squareSpawnAllowed)
+                return;
             SpawnSquare(0);
             _currentTap++;
             if (_currentTap > 9)
@@ -46,24 +51,45 @@ namespace IdleClicker.GameLogic
             }
         }
 
+
         private void Merge()
         {
-            for (int i = 0; i < _maxLevel; i++)
-            {
-                var elementsGroupByLevel = _spawnedElements.Where(x => x.Value == i).Select(x => x.Key).ToList();
+            _squareSpawnAllowed = false;
 
-                if (elementsGroupByLevel.Count >= 10)
+            var elementsGroupByLevel = _spawnedElements
+                .Where(x => x.Value == _mergeCounter)
+                .Select(x => x.Key)
+                .ToList();
+
+            if (elementsGroupByLevel.Count >= 10)
+            {
+                elementsGroupByLevel.Sort(GameSquareElement.ElementsVerticalComparer);
+                int delayCounter = 0;
+                for (int i = 0; i < elementsGroupByLevel.Count; i++)
                 {
-                    foreach (var square in elementsGroupByLevel)
+                    GameSquareElement square = elementsGroupByLevel[i];
+                    _spawnedElements.Remove(square);
+
+                    DOVirtual.DelayedCall(delayCounter++ * .05f, () =>
                     {
-                        square.MoveToPool();
-                        _spawnedElements.Remove(square);
-                    }
-                    SpawnSquare(i + 1);
-                    if (i + 2 > _maxLevel)
-                        _maxLevel++;
+                        square.MoveToPoolWithScaleAnim();
+                        if (delayCounter == elementsGroupByLevel.Count)
+                        {
+                            DOVirtual.DelayedCall(++delayCounter * .05f, () =>
+                            {
+                                SpawnSquare(++_mergeCounter);
+                                Merge();//check for next level merge;
+                            });
+                        }
+                    });
                 }
             }
+            else
+            {
+                _mergeCounter = 0;
+                _squareSpawnAllowed = true;
+            }
         }
+
     }
 }

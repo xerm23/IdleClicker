@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DG.Tweening;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -95,10 +96,24 @@ namespace IdleClicker.Tools.ObjectPooling
 
         protected abstract void OnGetFromPool();
 
+        public void MoveToPoolWithScaleAnim()
+        {
+            if (_isInPool)
+                throw new InvalidOperationException("Object is already in the pool");
+
+            transform.DOScale(Vector3.zero, .25f).SetEase(Ease.InOutElastic).OnComplete(() =>
+            {
+                transform.localScale = Vector3.one;
+                _pool.Add(this);
+                Reset();
+            });
+        }
+
         public void MoveToPool()
         {
             if (_isInPool)
                 throw new InvalidOperationException("Object is already in the pool");
+
             _pool.Add(this);
             Reset();
         }
