@@ -96,12 +96,12 @@ namespace IdleClicker.Tools.ObjectPooling
 
         protected abstract void OnGetFromPool();
 
-        public void MoveToPoolWithScaleAnim()
+        public virtual void MoveToPoolWithScaleAnim(float animDuration)
         {
             if (_isInPool)
                 throw new InvalidOperationException("Object is already in the pool");
 
-            transform.DOScale(Vector3.zero, .25f).SetEase(Ease.InOutElastic).OnComplete(() =>
+            transform.DOScale(Vector3.zero, animDuration).SetEase(Ease.InOutElastic).OnComplete(() =>
             {
                 transform.localScale = Vector3.one;
                 _pool.Add(this);

@@ -9,7 +9,8 @@ namespace IdleClicker.GameLogic
     public class GameSquareElement : Poolable<GameSquareElement>
     {
         [SerializeField] private SpriteRenderer _spriteRenderer;
-        [SerializeField] TextMeshPro _levelTMP;
+        [SerializeField] private TextMeshPro _levelTMP;
+        [SerializeField] private ParticleSystem[] _particles;
 
         public void SetLevel(int level)
         {
@@ -25,6 +26,15 @@ namespace IdleClicker.GameLogic
         protected override void Reset()
         {
             gameObject.SetActive(false);
+        }
+
+        public override void MoveToPoolWithScaleAnim(float animDuration)
+        {
+            base.MoveToPoolWithScaleAnim(animDuration);
+            foreach (var particle in _particles)
+            {
+                particle.Play();
+            }
         }
 
         public static int ElementsVerticalComparer(GameSquareElement element1, GameSquareElement element2)

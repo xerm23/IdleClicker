@@ -64,18 +64,17 @@ namespace IdleClicker.GameLogic
             if (elementsGroupByLevel.Count >= 10)
             {
                 elementsGroupByLevel.Sort(GameSquareElement.ElementsVerticalComparer);
-                int delayCounter = 0;
                 for (int i = 0; i < elementsGroupByLevel.Count; i++)
                 {
                     GameSquareElement square = elementsGroupByLevel[i];
                     _spawnedElements.Remove(square);
 
-                    DOVirtual.DelayedCall(delayCounter++ * .05f, () =>
+                    DOVirtual.DelayedCall(i * .05f, () =>
                     {
-                        square.MoveToPoolWithScaleAnim();
-                        if (delayCounter == elementsGroupByLevel.Count)
+                        square.MoveToPoolWithScaleAnim(1.25f);
+                        if (i == elementsGroupByLevel.Count)
                         {
-                            DOVirtual.DelayedCall(++delayCounter * .05f, () =>
+                            DOVirtual.DelayedCall(++i * .05f + .5f, () =>
                             {
                                 SpawnSquare(++_mergeCounter);
                                 Merge();//check for next level merge;
