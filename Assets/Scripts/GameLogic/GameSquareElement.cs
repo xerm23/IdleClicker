@@ -1,6 +1,5 @@
 using DG.Tweening;
 using IdleClicker.Tools.ObjectPooling;
-using System;
 using TMPro;
 using UnityEngine;
 
@@ -11,6 +10,10 @@ namespace IdleClicker.GameLogic
         [SerializeField] private SpriteRenderer _spriteRenderer;
         [SerializeField] private TextMeshPro _levelTMP;
         [SerializeField] private ParticleSystem[] _particles;
+        [SerializeField] private AudioClip[] _spawnAudioClips;
+
+        private AudioSource AudioSource => _audioSource ??= GetComponent<AudioSource>();
+        private AudioSource _audioSource;
 
         public void SetLevel(int level)
         {
@@ -20,6 +23,9 @@ namespace IdleClicker.GameLogic
 
         protected override void OnGetFromPool()
         {
+            AudioSource.pitch = UnityEngine.Random.Range(.75f, 1.25f);
+            AudioSource.PlayOneShot(_spawnAudioClips[UnityEngine.Random.Range(0, _spawnAudioClips.Length)]);
+            transform.DOPunchPosition(Vector3.up, .5f, 2);
             transform.DOPunchScale(Vector3.one * 1.25f, .25f).OnComplete(() => transform.localScale = Vector3.one);
         }
 

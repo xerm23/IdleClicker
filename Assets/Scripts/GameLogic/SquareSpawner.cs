@@ -1,23 +1,25 @@
 using DG.Tweening;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 namespace IdleClicker.GameLogic
 {
     public class SquareSpawner : MonoBehaviour
     {
         [SerializeField] private GameSquareElement _squareElementPrefab;
-
         [SerializeField] private Button _tapTheScreenBtn;
+        [SerializeField] private AudioSource _mergeSound;        
 
         ///<value>square, level</value>
         private readonly Dictionary<GameSquareElement, int> _spawnedElements = new();
         private int _currentTap = 0;
         private bool _squareSpawnAllowed = true;
         private int _mergeCounter = 0;
+
+        public int TotalElements => _spawnedElements.Count;
 
         void Start()
         {
@@ -63,6 +65,8 @@ namespace IdleClicker.GameLogic
 
             if (elementsGroupByLevel.Count >= 10)
             {
+                _mergeSound.pitch = Random.Range(.85f, 1.5f);
+                _mergeSound.Play();
                 elementsGroupByLevel.Sort(GameSquareElement.ElementsVerticalComparer);
                 for (int i = 0; i < elementsGroupByLevel.Count; i++)
                 {
