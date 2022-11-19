@@ -1,4 +1,5 @@
 using DG.Tweening;
+using IdleClicker.Managers;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -11,7 +12,7 @@ namespace IdleClicker.GameLogic
     {
         [SerializeField] private GameSquareElement _squareElementPrefab;
         [SerializeField] private Button _tapTheScreenBtn;
-        [SerializeField] private AudioSource _mergeSound;        
+        [SerializeField] private AudioSource _mergeSound;
 
         ///<value>square, level</value>
         private readonly Dictionary<GameSquareElement, int> _spawnedElements = new();
@@ -45,6 +46,7 @@ namespace IdleClicker.GameLogic
         {
             if (!_squareSpawnAllowed)
                 return;
+            ScoreManager.IncreaseTaps(1);
             SpawnSquare(0);
             _currentTap++;
             if (_currentTap > 9)
@@ -65,6 +67,7 @@ namespace IdleClicker.GameLogic
 
             if (elementsGroupByLevel.Count >= 10)
             {
+                ScoreManager.IncreaseMerges(1);
                 _mergeSound.pitch = Random.Range(.85f, 1.5f);
                 _mergeSound.Play();
                 elementsGroupByLevel.Sort(GameSquareElement.ElementsVerticalComparer);

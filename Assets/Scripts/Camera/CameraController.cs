@@ -11,11 +11,11 @@ namespace IdleClicker.CameraControl
         [SerializeField] private SquareSpawner _squareSpawner;
         [SerializeField] private float _lerpSpeed = 1.25f;
         [SerializeField] private Camera _cam;
-        private float TargetYPosition => _squareSpawner.TotalElements;
+        private float TargetYPosition => _squareSpawner.TotalElements + 1.5f;
         private float _deltaYPos;
         private float _startOrthoSize;
 
-        private void Start()
+        private void Start()    
         {
             _startOrthoSize = _cam.orthographicSize;
         }
