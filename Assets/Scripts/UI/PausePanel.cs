@@ -1,4 +1,5 @@
 using DG.Tweening;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,25 +16,33 @@ namespace IdleClicker.UI
         private Image _pauseButtonImage;
         private Image _resumeButtonImage;
 
-
         private void Start()
         {
             _pauseButtonImage = _pauseButton.GetComponent<Image>();
             _resumeButtonImage = _resumeButton.GetComponent<Image>();
             _pauseButton.onClick.AddListener(PauseGame);
             _resumeButton.onClick.AddListener(ResumeGame);
+            GameManager.OnPlayerStartedGame += ActivatePauseButton;
         }
 
+        private void OnDestroy()
+        {
+            GameManager.OnPlayerStartedGame -= ActivatePauseButton;
+        }
+
+        private void ActivatePauseButton() => _pauseButton.gameObject.SetActive(true);
 
         private void ResumeGame()
         {
             SwapButtonAnim(_pauseButtonImage, _resumeButtonImage, false);
+            GameManager.ResumeGame();
             _blocker.SetActive(false);
         }
 
         private void PauseGame()
         {
             SwapButtonAnim(_resumeButtonImage, _pauseButtonImage, true);
+            GameManager.PauseGame();
             _blocker.SetActive(true);
         }
 

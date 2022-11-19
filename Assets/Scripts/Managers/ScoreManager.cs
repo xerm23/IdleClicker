@@ -7,22 +7,22 @@ namespace IdleClicker.Managers
 {
     public static class ScoreManager
     {
-        public static int TotalTaps = 0;
-        public static int TotalMerges = 0;
+        private static int _totalTaps = 0;
+        private static int _totalMerges = 0;
 
-        public static Action OnTotalTapChanged;
-        public static Action OnTotalMergesChanged;
+        public static Action<int> OnTotalTapChanged;
+        public static Action<int> OnTotalMergesChanged;
 
         public static void IncreaseTaps(int amount)
         {
-            TotalTaps += amount;
-            OnTotalTapChanged?.Invoke();
+            _totalTaps += amount;
+            OnTotalTapChanged?.Invoke(_totalTaps);
         }
 
         public static void IncreaseMerges(int amount)
         {
-            TotalMerges += amount;
-            OnTotalMergesChanged?.Invoke();
+            _totalMerges += amount;
+            OnTotalMergesChanged?.Invoke(_totalMerges);
         }
 
     }
